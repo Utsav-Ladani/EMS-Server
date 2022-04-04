@@ -3,8 +3,8 @@ const { ObjectId, Timestamp } = require('mongodb');
 const pollRouter = express.Router()
 const { PollDB } = require('../DB');
 
-pollRouter.get('/:poll_id', (req, res) => {
-	const { poll_id } = req.params;
+pollRouter.get('/', (req, res) => {
+	const { poll_id } = req.query;
 
 	if (ObjectId.isValid(poll_id)) {
 		PollDB.findOne({ _id: ObjectId(poll_id) })
@@ -19,25 +19,28 @@ pollRouter.get('/:poll_id', (req, res) => {
 				else res.status(404).send("Poll Not Found");
 			});
 	}
-	else res.status(401).send("Invalid Poll ID");
+	else res.status(400).send("Invalid Poll ID");
 
 })
 
 
 
-pollRouter.get('/search/:poll_name', (req, res) => {
-	const { poll_name } = req.params;
+pollRouter.get('/search/', (req, res) => {
+	const { poll_name } = req.query;
 
-	PollDB.find({ Name: { $regex: poll_name } }).toArray()
+	PollDB.find({ Name: { $regex: poll_name, $options : 'i' } }).sort({"Start_Time": -1}).toArray()
 		.then(data => {
 			if (data) {
-				const timestamp = new Timestamp(new Date());
+				const dateNow = new Date();
 				const arr = data.map(d => {
-					if (timestamp < d.End_Time)
+					if (dateNow < d.End_Time)
 						delete d.Result;
+						
 					delete d.WhoGave;
+					
 					return d;
-				})
+				}).filter(d => dateNow >= d.Start_Time);
+				
 				res.json(arr);
 			}
 			else res.status(404).send("Poll Not Found");
@@ -48,19 +51,18 @@ pollRouter.post('/vote', (req, res) => {
 	const { poll_id, vote } = req.body;
 	const { Role, _id } = req.user;
 
-	console.log(Role);
 
 	if (ObjectId.isValid(poll_id)) {
 		const findQuery = {
 			"_id": ObjectId(poll_id),
 			"WhoCan": { $elemMatch: { $in: Role } },
-			"WhoGave": { $not: { $in: [_id] } }
+			"WhoGave": { $nin: [_id] }
 		};
 		selector = {};
 		selector['Result.' + vote] = 1;
+		selector["Total_Vote"] = 1;
 		const updateQuery = {
 			$push: { "WhoGave": _id },
-			$inc: { "Total_Vote": 1 },
 			$inc: selector
 		};
 

@@ -7,9 +7,9 @@ userRouter.get('/profile', (req, res) => {
 })
 
 userRouter.put('/reset-password', (req, res) => {
-	const user = req.user;
-	const { newPassword } = req.body;
-	UserDB.findOneAndUpdate({ Name: user.Name }, { $set: { Password: newPassword } })
+	const { Voter_ID } = req.user;
+	const { password } = req.body;
+	UserDB.findOneAndUpdate({ Voter_ID: Voter_ID }, { $set: { Password: password } })
 		.then(data => res.status(200).send("Okay"))
 		.catch(e => res.status(400).json(e));
 })

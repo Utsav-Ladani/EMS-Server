@@ -6,9 +6,9 @@ const { UserDB } = require('../DB');
 const JWTSECRET = process.env.JWTSECRET;
 
 authRouter.post('/signin', async (req, res) => {
-	const { username, password } = req.body;
+	const { voter_id, password } = req.body;
 
-	UserDB.findOne({ Name: username, Password: password })
+	UserDB.findOne({ Voter_ID: voter_id, Password: password })
 		.then(data => {
 			if (data) {
 				const { Password, ...user } = data;
