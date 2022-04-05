@@ -13,7 +13,7 @@ authRouter.post('/signin', async (req, res) => {
 			if (data) {
 				const { Password, ...user } = data;
 				token = jsonwebtoken.sign({ user }, JWTSECRET, { expiresIn: '1h', algorithm: 'HS256' });
-				res.json(token);
+				res.status(200).json(token);
 			}
 			else res.status(401).send("Invalid Credential");
 		});
