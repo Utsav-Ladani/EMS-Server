@@ -53,7 +53,7 @@ pollRouter.post('/vote', (req, res) => {
 
 		PollDB.updateOne(findQuery, updateQuery)
 			.then(data => {
-				if (data.matchedCount == 0) res.status(400).send("You are not illegible for this poll");
+				if (data.matchedCount == 0) res.status(400).send("you can not vote for this poll");
 				else res.status(200).send("Your vote has been recorded");
 			});
 	}
