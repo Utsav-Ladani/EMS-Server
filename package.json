@@ -2,6 +2,12 @@
   "name": "ems-server",
   "version": "1.0.0",
   "license": "MIT",
+  "engines": {
+   "node": "16.13.0"
+  },
+  "scripts": {
+   "start": "node ./server.js"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
