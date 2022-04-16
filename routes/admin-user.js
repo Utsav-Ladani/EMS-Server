@@ -56,7 +56,7 @@ adminUserRouter.put('/update', (req, res) => {
 	if (voter_id && ObjectId.isValid(req.body._id)) {
 		UserDB.findOneAndReplace({ "Voter_ID": voter_id }, { _id: ObjectId(req.body._id), ...data })
 			.then(d => {
-				if (data?.value?._id) res.status(200).send("User updated successfully");
+				if (d?.value?._id) res.status(200).send("User updated successfully");
 				else res.status(404).send("User Not Found");
 			});
 	}
