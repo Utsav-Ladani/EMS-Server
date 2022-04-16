@@ -11,7 +11,7 @@ const userRouter = require('./routes/user');
 const pollRouter = require('./routes/poll');
 const adminRouter = require('./routes/admin');
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5055;
 const JWTSECRET = process.env.JWTSECRET;
 const app = express();
 
